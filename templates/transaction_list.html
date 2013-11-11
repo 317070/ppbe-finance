@@ -1,5 +1,31 @@
 {% extends "base.html" %}
 
+{% load filters %}
+
 {% block content %}
-HAllo
+	<table class="table table-bordered table-hover table-condensed">
+	   <thead>
+	   
+	   <tr>
+             <th>Date</th>
+             <th>Account</th>
+             <th>Amount</th>
+             <th>Initials</th>
+             <th>Location</th>
+             <th>Notes</th>
+      </tr>
+      </thead>
+      <tbody>
+	  {% for transaction in transaction_list %}
+	        <tr {% if transaction.amount < 0 %} class="error" {% else %} class="success" {% endif %}>
+			 <td>{{transaction.date|date:"j F Y"}}</td>
+			 <td>{{transaction.beneficiary.current_banking_account.iban|hideIBAN}}</td>
+			 <td>{{transaction.amount}} EUR</td>
+			 <td>{{transaction.beneficiary.name|initials}}</td>
+			 <td>{{transaction.beneficiary.postal_code}} {{transaction.beneficiary.city}}</td>
+			 <td>{{transaction.statement}}</td>
+			</tr>
+	  {% endfor %}
+	  </tbody>
+	</table>
 {% endblock %}
