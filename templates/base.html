@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pirate Party Transactions</title>
+    <meta name="description" content="{% block description %}{% endblock %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="{% block author %}{% endblock %}">
+    <link rel="icon" type="image/png" href="{{STATIC_URL}}images/logo.png" />
+    <link rel="image_src" href="{% block image %}{{STATIC_URL}}images/logo.png{% endblock %}" / >
+    <link rel="stylesheet" href="{{STATIC_URL}}lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{STATIC_URL}}css/style.css" />
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}lib/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/utility.js"></script>
+    {% block extrastyle %}{% endblock %}
+    <meta charset="utf-8" />
+    {% block extrahead %} {% endblock %}
+</head>
+<body id="body">
+    <form class="navbar-form pull-right" action="{% url user-login %}" method="POST">
+        <input class="span2" name="username" type="text" placeholder="Email">
+        <input class="span2" name="password" type="password" placeholder="Password">
+        <input type="hidden" name="next" value="{{ request.path }}" />
+        <button type="submit" value="Login" class="btn">Sign in</button>
+    </form>
+    <section id="main">
+       <div class="inset">
+           {% if messages %}
+                {% for message in messages %}
+                  <div class="alert alert-info">
+                      <button type="button" class="close" data-dismiss="alert">&times;</button>
+                      <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+                  </div>
+                {% endfor %}
+           {% endif %}
+           {% block content %}{% endblock %}
+       </div>
+    </section>
+</body>
+</html>

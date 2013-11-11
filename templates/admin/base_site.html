@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {% trans 'Django site admin' %}{% endblock %}
+
+{% block branding %}
+    <div style="padding:10px;">
+        <a href="/admin"><h1 id="site-name" style="display:inline-block">{% trans 'The Pirate Party Finance Tool' %}</h1></a>
+        <a href="/admin/import_csv" class="button" style="font-size: 20px; margin: 10px 5px 5px 5px; color:black;">Import csv</a>
+        <a href="/admin/export_csv" class="button" style="font-size: 20px; margin: 10px 5px 5px 5px; color:black;">Export csv</a>
+    </div>
+{% endblock %}
+
+{% block nav-global %}
+{% endblock %}
+
+
