@@ -6,7 +6,7 @@ class IBANTestCase(TestCase):
         pass
         
     def test_iban_converter(self):
-        """Animals that can speak are correctly identified"""
+        """BBAN to IBAN conversion"""
         self.assertEqual(Banking_Account.convertBBANToIBAN("091-0002777-90"), 'BE34091000277790')
         self.assertEqual(Banking_Account.convertBBANToIBAN("679-2005502-27"), 'BE48679200550227')
         self.assertEqual(Banking_Account.isBBAN("679-2005502-27"), True)
