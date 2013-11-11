@@ -2,7 +2,7 @@ from django import forms
 import csv
 from finance.models import Pirate_Account, Banking_Account, Person, Transaction
 import re
-from south.utils.datetime_utils import datetime
+from datetime import datetime
 from email.utils import parseaddr
 
 class CSVInputForm(forms.Form):
