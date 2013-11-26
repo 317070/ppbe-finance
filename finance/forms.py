@@ -80,6 +80,8 @@ class CSVInputForm(forms.Form):
                 payer.banking_account.add(beneficiary_account)
             payer.save()
             
+            amount = float(amount.replace(".","").replace(",","."))
+            
             (transaction, created) = Transaction.objects.get_or_create(
                                             date=transaction_date, 
                                             beneficiary=payer, 

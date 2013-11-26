@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 @register.filter
 def initials(value):
-    return '. '.join([word[0] for word in value.split(' ')])+'.'
+    return '. '.join([word[0] for word in value.split(' ') if word])+'.'
 
 @register.filter
 def hideIBAN(value):
