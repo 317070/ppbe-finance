@@ -1,6 +1,12 @@
 from django.db import models
 from finance.settings import SITE_ROOT
 import re
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.timezone import datetime, timedelta, now
+from smtplib import SMTPRecipientsRefused
 
 class Person(models.Model):
     name = models.CharField(max_length=127)
@@ -14,11 +20,16 @@ class Person(models.Model):
     
     notas = models.CharField(max_length=127,blank=True)
     
-    custom_payment_date = models.DateField(blank=True, null=True)    
+    custom_payment_date = models.DateField(blank=True, null=True)
     email_address = models.EmailField(blank=True)
     is_member = models.BooleanField(default=True)
     email_reminder = models.BooleanField(default=True)
     email_reminder_count = models.IntegerField(default=0)
+    coreteam_warned = models.BooleanField(default=False)
+
+    @property
+    def address(self):
+        return "%s\n%s %s(%s)\n%s %s"%(self.name, self.street, self.number, self.bus, self.postal_code, self.city)
 
     @property
     def last_payment_date(self):
@@ -42,6 +53,43 @@ class Person(models.Model):
 
     def __str__(self):
         return self.name
+
+    def warn_coreteam(self):
+        if self.coreteam_warned:
+            return False 
+        text = render_to_string('mails/coreteam_contact.txt', dictionary={'name':self.name, 'address':self.address, 'email':self.email_address})
+        try:
+            #pass
+            send_mail('Finance Squad', text, self.email_address, ["coreteam@pirateparty.be"], fail_silently=False)
+            self.coreteam_warned = True
+            self.save()
+            return True
+        except SMTPRecipientsRefused:
+            print "refused"
+            return False
+
+    def send_reminder_mail(self):
+        if not self.email_reminder:
+            return False
+        if self.last_payment_date > timezone.now()-timedelta(years=1):
+            return False
+        if self.last_payment_date > timezone.now()-timedelta(years=1, months=1) and email_reminder_count>=1:
+            return False
+        if self.last_payment_date > timezone.now()-timedelta(years=1, months=2) and email_reminder_count>=2:
+            return False
+        if email_reminder_count >= 3: #don't send more than 3 mails
+            return False
+        text = render_to_string('mails/reminder.txt', dictionary={})
+        try:
+            #pass
+            send_mail('Finance Squad', text, settings.DEFAULT_FROM_EMAIL, [self.email_address], fail_silently=False)
+            self.email_reminder_count += 1
+            self.save()
+            return True
+        except SMTPRecipientsRefused:
+            print "refused"
+            return False
+
 
 class Banking_Account(models.Model):
     iban = models.CharField(max_length=127)
@@ -118,6 +166,24 @@ class Transaction(models.Model):
     beneficiary = models.ForeignKey(Person, related_name="transactions")
     public = models.BooleanField(default=False)
 
+    thankyou_sent = models.BooleanField(default=False)
+
+    def send_thankyou_mail(self):
+        if thankyou_sent:
+            return False
+        if amount<0.0:
+            return False
+        text = render_to_string('mails/thankyou.txt', dictionary={})
+        try:
+            #pass
+            send_mail('Finance Squad', text, settings.DEFAULT_FROM_EMAIL, [self.beneficiary.email_address], fail_silently=False)
+            self.thankyou_sent = True
+            self.save()
+            return True
+        except SMTPRecipientsRefused:
+            print "refused"
+            return False            
+
 class Payment(models.Model):
     amount = models.FloatField()
     code = models.CharField(max_length=127,blank=True)
@@ -130,5 +196,3 @@ class Reimbursement(models.Model):
     beneficiary = models.ForeignKey(Person, related_name="reimbursements")
     mail_to = models.ForeignKey(Person, related_name="following_reimbursements",blank=True)
     proof = models.FileField(upload_to=SITE_ROOT+"/uploads",blank=True)
-
-

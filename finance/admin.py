@@ -19,10 +19,26 @@ class PirateAccountAdmin(admin.ModelAdmin):
 
 def make_public(modeladmin, request, queryset):
     for obj in queryset:
-        if "AT" in obj.statement.upper():
+        if obj.beneficiary.name in obj.statement.upper():
             return
     queryset.update(public=True)
 make_public.short_description = "Make public"
+
+def warn_coreteam(modeladmin, request, queryset):
+    for obj in queryset:
+        obj.warn_coreteam()
+warn_coreteam.short_description = "Warn coreteam"
+
+def send_reminder_mail(modeladmin, request, queryset):
+    for obj in queryset:
+        obj.send_reminder_mail()
+send_reminder_mail.short_description = "Send a reminder mail"
+
+def send_thankyou_mail(modeladmin, request, queryset):
+    for obj in queryset:
+        obj.send_thankyou_mail()
+send_thankyou_mail.short_description = "Send a thanking mail"
+
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('date', 'amount', 'beneficiary','email',  'public', 'statement',)
@@ -33,11 +49,11 @@ class TransactionAdmin(admin.ModelAdmin):
         }),
         ('Details', {
             'classes': ('collapse',),
-            'fields': ('BIC', 'code', 'pirate_account')
+            'fields': ('BIC', 'code', 'pirate_account','thankyou_sent')
         }),
     )
     readonly_fields = ('email','beneficiary_admin_link')
-    actions = [make_public]
+    actions = [make_public, send_thankyou_mail]
     
     def email(self, transaction):
         return transaction.beneficiary.email_address
@@ -49,7 +65,7 @@ class TransactionAdmin(admin.ModelAdmin):
     beneficiary_admin_link.short_description = 'Beneficiary'
     
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('name', 'doesnt_have_nonpublic_payments', 'email_address', 'last_payment', 'current_banking_account','street','number','bus','postal_code','city','notas')
+    list_display = ('name', 'doesnt_have_nonpublic_payments', 'email_address', 'last_payment', 'email_reminder_count', 'coreteam_warned', 'current_banking_account','street','number','bus','postal_code','city','notas')
     inlines = [TransactionInline]
     fieldsets = (
         (None, {
@@ -57,9 +73,10 @@ class PersonAdmin(admin.ModelAdmin):
         }),
         ('Details', {
             'classes': ('collapse',),
-            'fields': ('email_reminder', 'email_reminder_count', 'banking_account','custom_payment_date')
+            'fields': ('email_reminder', 'email_reminder_count', 'banking_account','custom_payment_date','coreteam_warned')
         }),
     )
+    actions = [warn_coreteam, send_reminder_mail]
     readonly_fields = ('last_payment','doesnt_have_nonpublic_payments',)
     
     def last_payment(self, person):
