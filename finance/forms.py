@@ -90,6 +90,7 @@ class CSVInputForm(forms.Form):
             transaction.BIC = BIC
             transaction.code = code
             transaction.statement = statement
+            transaction.public = False
             transaction.save()
             
         return (success, messages)

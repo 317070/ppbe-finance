@@ -10,10 +10,28 @@ from django.core.servers.basehttp import FileWrapper
 import csv
 
 def transaction_list(request):
-    transaction_list = Transaction.objects.all().order_by('date')[:]#for debugging purposes, results should actually be paginated
+    transaction_list = Transaction.objects.filter(public=True).order_by('date')[:]#for debugging purposes, results should actually be paginated
     return render(request, 'transaction_list.html', {
         'transaction_list': transaction_list,
     })
+
+def chart_account(request):
+    transactions = Transaction.objects.filter(public=True).order_by('date')[:]
+    
+    data = []
+    account = 0.0
+    for transaction in transactions:
+        account += transaction.amount
+        date = "Date.UTC(%d,%d,%d)"%(transaction.date.year,transaction.date.month-1,transaction.date.day)
+        data.append([date, account])
+    money_data = str(data)
+    money_data = money_data.replace("'", "")
+    money_data = money_data.replace("\"", "")
+    
+    return render(request, 'chart_account.html', {
+        'money_data': money_data,
+    })
+
 
 @staff_member_required
 def import_csv(request):

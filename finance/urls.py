@@ -8,6 +8,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', finance.views.transaction_list, name='home'),
+    url(r'^list$', finance.views.transaction_list, name='list'),
+    url(r'^charts/account$', finance.views.chart_account, name='chart_account'),
     
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
