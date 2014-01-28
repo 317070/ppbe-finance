@@ -10,7 +10,7 @@ from django.core.servers.basehttp import FileWrapper
 import csv
 
 def transaction_list(request):
-    transaction_list = Transaction.objects.filter(public=True).order_by('date')[:]#for debugging purposes, results should actually be paginated
+    transaction_list = Transaction.objects.filter(public=True).order_by('date')[::-1]#for debugging purposes, results should actually be paginated
     return render(request, 'transaction_list.html', {
         'transaction_list': transaction_list,
     })

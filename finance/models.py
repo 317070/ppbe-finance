@@ -83,6 +83,8 @@ class Person(models.Model):
     def send_reminder_mail(self):
         if not self.email_reminder:
             return False
+        if not self.email_address:
+            return False
         if self.last_payment_date > date.today()-timedelta(days=366):
             return False
         if self.last_payment_date > date.today()-timedelta(days=366+1*30) and self.email_reminder_count>=1:
