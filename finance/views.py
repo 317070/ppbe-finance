@@ -68,8 +68,8 @@ def export_csv(request):
                              transaction.amount, 
                              transaction.beneficiary.current_banking_account.iban,
                              transaction.BIC,
-                             transaction.beneficiary.name,
-                             "%s %s %s %s %s"%(transaction.beneficiary.street, transaction.beneficiary.number, transaction.beneficiary.bus, transaction.beneficiary.postal_code, transaction.beneficiary.city),
+                             transaction.beneficiary.lastname+" "+transaction.beneficiary.firstname,
+                             "%s %s %s"%(transaction.beneficiary.street, transaction.beneficiary.postal_code, transaction.beneficiary.city),
                              transaction.code,
                              transaction.statement])
 
