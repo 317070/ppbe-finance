@@ -74,11 +74,11 @@ class Person(models.Model):
             return False
         if self.last_payment_date > date.today()-timedelta(days=366):
             return False
-        if self.last_payment_date > date.today()-timedelta(days=366+1*30) and email_reminder_count>=1:
+        if self.last_payment_date > date.today()-timedelta(days=366+1*30) and self.email_reminder_count>=1:
             return False
-        if self.last_payment_date > date.today()-timedelta(days=366+2*30) and email_reminder_count>=2:
+        if self.last_payment_date > date.today()-timedelta(days=366+2*30) and self.email_reminder_count>=2:
             return False
-        if email_reminder_count >= 3: #don't send more than 3 mails
+        if self.email_reminder_count >= 3: #don't send more than 3 mails
             return False
         text = render_to_string('mails/reminder.txt', dictionary={})
         try:
