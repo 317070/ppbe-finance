@@ -10,14 +10,25 @@ from smtplib import SMTPRecipientsRefused
 from datetime import date
 
 class Person(models.Model):
-    name = models.CharField(max_length=127)
+    
+    # constants
+    LANGUAGES = (
+        ('NL', 'Nederlands'),
+        ('FR', 'Francais'),
+        ('EN', 'English'),
+        ('DE', 'German'),
+    )
+    
+    
+    firstname = models.CharField(max_length=127)
+    lastname = models.CharField(max_length=127,blank=True)
     street = models.CharField(max_length=127,blank=True)
-    number = models.IntegerField(blank=True)
-    bus = models.CharField(max_length=127,blank=True)
     postal_code = models.IntegerField(blank=True)
     city = models.CharField(max_length=127,blank=True)
-    banking_account = models.ManyToManyField('Banking_Account',related_name="owner")
-    current_banking_account = models.ForeignKey('Banking_Account')
+    banking_account = models.ManyToManyField('Banking_Account',related_name="owner",blank=True)
+    current_banking_account = models.ForeignKey('Banking_Account',blank=True, null=True)
+    telephone = models.CharField(max_length=127,blank=True)
+    language = models.CharField(max_length=127,choices=LANGUAGES,blank=True)
     
     notas = models.CharField(max_length=127,blank=True)
     
@@ -30,7 +41,7 @@ class Person(models.Model):
 
     @property
     def address(self):
-        return "%s\n%s %s(%s)\n%s %s"%(self.name, self.street, self.number, self.bus, self.postal_code, self.city)
+        return "%s %s\n%s %s(%s)\n%s %s"%(self.firstname, self.lastname, self.street, self.number, self.bus, self.postal_code, self.city)
 
     @property
     def last_payment_date(self):
@@ -53,12 +64,12 @@ class Person(models.Model):
     
 
     def __str__(self):
-        return self.name
+        return self.firstname + " " + self.lastname
 
     def warn_coreteam(self):
         if self.coreteam_warned:
             return False 
-        text = render_to_string('mails/coreteam_contact.txt', dictionary={'name':self.name, 'address':self.address, 'email':self.email_address})
+        text = render_to_string('mails/coreteam_contact.txt', dictionary={'address':self.address, 'email':self.email_address})
         try:
             #pass
             send_mail('Finance Squad', text, self.email_address, ["coreteam@pirateparty.be"], fail_silently=False)

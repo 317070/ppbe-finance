@@ -19,7 +19,9 @@ class PirateAccountAdmin(admin.ModelAdmin):
 
 def make_public(modeladmin, request, queryset):
     for obj in queryset:
-        if obj.beneficiary.name in obj.statement.upper():
+        if obj.beneficiary.firstname in obj.statement.upper():
+            return
+        if obj.beneficiary.lastname in obj.statement.upper():
             return
     queryset.update(public=True)
 make_public.short_description = "Make public"
@@ -59,21 +61,21 @@ class TransactionAdmin(admin.ModelAdmin):
         return transaction.beneficiary.email_address
 
     def beneficiary_admin_link(self, transaction):
-        return '<a href="%s">%s (%s)</a>' % (urlresolvers.reverse('admin:finance_person_change', args=(transaction.beneficiary.id,)), transaction.beneficiary.name, transaction.beneficiary.email_address)
+        return '<a href="%s">%s %s(%s)</a>' % (urlresolvers.reverse('admin:finance_person_change', args=(transaction.beneficiary.id,)), transaction.beneficiary.firstname, transaction.beneficiary.lastname, transaction.beneficiary.email_address)
     
     beneficiary_admin_link.allow_tags = True
     beneficiary_admin_link.short_description = 'Beneficiary'
     
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('name', 'doesnt_have_nonpublic_payments', 'email_address', 'last_payment', 'email_reminder_count', 'coreteam_warned', 'current_banking_account','street','number','bus','postal_code','city','notas')
+    list_display = ('is_member', 'firstname', 'lastname', 'doesnt_have_nonpublic_payments', 'email_address', 'last_payment', 'email_reminder_count', 'coreteam_warned', 'current_banking_account','street','postal_code','city')
     inlines = [TransactionInline]
     fieldsets = (
         (None, {
-            'fields': ('is_member', 'name','street','number', 'bus', 'postal_code', 'city', 'email_address', 'current_banking_account')
+            'fields': ('is_member', 'firstname', 'lastname', 'street', 'postal_code', 'city', 'email_address', 'telephone', 'custom_payment_date', 'current_banking_account')
         }),
         ('Details', {
             'classes': ('collapse',),
-            'fields': ('email_reminder', 'email_reminder_count', 'banking_account','custom_payment_date','coreteam_warned')
+            'fields': ('email_reminder', 'email_reminder_count', 'banking_account', 'coreteam_warned','notas')
         }),
     )
     actions = [warn_coreteam, send_reminder_mail]
@@ -85,7 +87,7 @@ class PersonAdmin(admin.ModelAdmin):
     def doesnt_have_nonpublic_payments(self, person):
         return not person.transactions.filter(public=False).exists()
     doesnt_have_nonpublic_payments.boolean = True
-    doesnt_have_nonpublic_payments.short_description = 'Does not have non-public transactions'
+    doesnt_have_nonpublic_payments.short_description = 'No secret transactions'
     
     last_payment.admin_order_field = 'transactions__date'
 

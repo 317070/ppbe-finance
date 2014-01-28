@@ -50,30 +50,28 @@ class CSVInputForm(forms.Form):
             (beneficiary_account, created) = Banking_Account.objects.get_or_create(iban=beneficiary)
             
             transaction_date = datetime.strptime(date, '%d-%m-%Y').date()
-            (street, number, bus, postal_code, city) = self.process_address(address)
+            (street, postal_code, city) = self.process_address(address)
             
-            r = re.compile(r'(\b[\w.]+@+[\w.]+.+[\w.]\b)')
-            mails = r.findall(statement)    
-            for m in mails:
-                statement.replace(m,"xx@xx.xx")
-                messages.append("Removed email address '%s' from statement"%m)
-
             try:
-                payer = Person.objects.get(name=name, postal_code=postal_code, number=number)
+                lastname = name.split(None,1)[0].title()
+                firstname = name.split(None,1)[1].title()
+            except:
+                firstname = name
+                lastname = ""
+            try:
+                payer = Person.objects.get(firstname=firstname, lastname=lastname, postal_code=postal_code)
             except:
                 payer = Person()
             
             if not payer.transactions.exists() or payer.transactions.latest('date').date < transaction_date:
                 # this is the most recent transaction. Update the information we have
-                payer.name = name
+                payer.firstname = firstname
+                payer.lastname = lastname
                 payer.street = street
-                payer.number = number
-                payer.bus = bus
                 payer.postal_code = postal_code
                 payer.city = city
                 payer.current_banking_account = beneficiary_account
-                if len(mails)==1:
-                    payer.email_address = mails[0]
+                payer.email_reminder_count = 0
                     
             payer.save()
             if not beneficiary_account.owner.exists():
@@ -101,30 +99,13 @@ class CSVInputForm(forms.Form):
         match = re.findall(pattern,address[::-1])
         if not match:
             street = address
-            number = ''
-            bus = ''
             postal_code = ''
             city = ''
         else:
             match = match[0][::-1]
             firstline = address.replace(match,"").strip()
             secondline = match.strip()
-            
-            match = re.findall(r"\d{1,5}",firstline)
-            if not match:
-                street = firstline
-                number = ""
-                bus = ""
-            else:
-                el = firstline.split(match[0])
-                street = el[0].strip()
-                number = int(match[0])
-                if len(match)>1:
-                    bus = match[1].strip()
-                elif len(el)>1:
-                    bus = el[1].strip()
-                else:
-                    bus = ""
+            street = firstline
             
             postal_code = re.findall(r"\d{4}",secondline)[0]
             city = secondline.replace(postal_code,"").strip()
@@ -132,17 +113,4 @@ class CSVInputForm(forms.Form):
         
         if postal_code == "":
             postal_code = 0
-        if number == "":
-            number = 0
-        return (street, number, bus, postal_code, city)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        return (street, postal_code, city)
