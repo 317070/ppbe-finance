@@ -3,6 +3,8 @@ from finance.models import Person, Transaction, Pirate_Account
 from finance import views
 from django.core import urlresolvers
 import sys
+from django.utils.timezone import datetime, timedelta, now
+from datetime import date
 
 class TransactionInline(admin.TabularInline):
     model = Transaction
@@ -67,11 +69,11 @@ class TransactionAdmin(admin.ModelAdmin):
     beneficiary_admin_link.short_description = 'Beneficiary'
     
 class PersonAdmin(admin.ModelAdmin):
-    list_display = ('is_member', 'firstname', 'lastname', 'doesnt_have_nonpublic_payments', 'email_address', 'last_payment', 'email_reminder_count', 'coreteam_warned', 'current_banking_account','street','postal_code','city')
+    list_display = ('firstname', 'lastname', 'is_valid_member', 'doesnt_have_nonpublic_payments', 'email_address', 'last_payment', 'email_reminder_count', 'coreteam_warned', 'current_banking_account','street','postal_code','city','language')
     inlines = [TransactionInline]
     fieldsets = (
         (None, {
-            'fields': ('is_member', 'firstname', 'lastname', 'street', 'postal_code', 'city', 'email_address', 'telephone', 'custom_payment_date', 'current_banking_account')
+            'fields': ('is_member', 'firstname', 'lastname', 'street', 'postal_code', 'city', 'email_address', 'telephone', 'custom_payment_date', 'current_banking_account','language')
         }),
         ('Details', {
             'classes': ('collapse',),
@@ -79,7 +81,7 @@ class PersonAdmin(admin.ModelAdmin):
         }),
     )
     actions = [warn_coreteam, send_reminder_mail]
-    readonly_fields = ('last_payment','doesnt_have_nonpublic_payments',)
+    readonly_fields = ('last_payment','doesnt_have_nonpublic_payments','is_valid_member')
     
     def last_payment(self, person):
         return person.last_payment_date
@@ -88,6 +90,10 @@ class PersonAdmin(admin.ModelAdmin):
         return not person.transactions.filter(public=False).exists()
     doesnt_have_nonpublic_payments.boolean = True
     doesnt_have_nonpublic_payments.short_description = 'No secret transactions'
+    
+    def is_valid_member(self, person):
+        return person.last_payment_date > date.today()-timedelta(days=366) and person.is_member
+    is_valid_member.boolean = True
     
     last_payment.admin_order_field = 'transactions__date'
 
