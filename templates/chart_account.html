@@ -201,7 +201,7 @@ $(function () {
                 tooltip: {
                 	formatter: function() {
                         return '<b>'+ this.series.name +'</b><br/>'+
-                        Highcharts.dateFormat('%e. %b', this.x) +': €'+ this.y;
+                        Highcharts.dateFormat('%e. %b', this.x) +': €'+ this.y.toFixed(2);
                     }
                 },
                 legend: {

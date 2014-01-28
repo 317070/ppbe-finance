@@ -21,7 +21,7 @@
 			 <td>{{transaction.date|date:"j F Y"}}</td>
 			 <td>{{transaction.beneficiary.current_banking_account.iban|hideIBAN}}</td>
 			 <td>{{transaction.amount}} EUR</td>
-			 <td>{{transaction.beneficiary.name|initials}}</td>
+			 <td>{{transaction.beneficiary.firstname|initials}} {{transaction.beneficiary.lastname|initials}}</td>
 			 <td>{{transaction.beneficiary.postal_code}} {{transaction.beneficiary.city}}</td>
 			 <td>{{transaction.statement}}</td>
 			</tr>
