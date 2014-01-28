@@ -169,9 +169,9 @@ class Transaction(models.Model):
     thankyou_sent = models.BooleanField(default=False)
 
     def send_thankyou_mail(self):
-        if thankyou_sent:
+        if self.thankyou_sent:
             return False
-        if amount<0.0:
+        if self.amount<0.0:
             return False
         text = render_to_string('mails/thankyou.txt', dictionary={})
         try:
