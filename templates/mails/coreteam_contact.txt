@@ -1,7 +1,6 @@
 Hello,
 
 We would like to inform you that a new member made a payment. If this member hasn't contacted you before, please give this pirate a warm welcome to the party.
-{{name}}
 {{address}}
 {{email}}
 
