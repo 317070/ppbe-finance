@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.timezone import datetime, timedelta, now
 from smtplib import SMTPRecipientsRefused
-import date
+from datetime import date
 
 class Person(models.Model):
     name = models.CharField(max_length=127)
