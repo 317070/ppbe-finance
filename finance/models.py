@@ -41,7 +41,7 @@ class Person(models.Model):
 
     @property
     def address(self):
-        return "%s %s\n%s %s(%s)\n%s %s"%(self.firstname, self.lastname, self.street, self.number, self.bus, self.postal_code, self.city)
+        return "%s %s\n%s \n%s %s"%(self.firstname, self.lastname, self.street, self.postal_code, self.city)
 
     @property
     def last_payment_date(self):
