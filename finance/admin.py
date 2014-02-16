@@ -92,7 +92,9 @@ class PersonAdmin(admin.ModelAdmin):
     doesnt_have_nonpublic_payments.short_description = 'No secret transactions'
     
     def is_valid_member(self, person):
-        return person.last_payment_date > date.today()-timedelta(days=366) and person.is_member
+        if person.last_payment_date:
+            return person.last_payment_date > date.today()-timedelta(days=366) and person.is_member
+        return False
     is_valid_member.boolean = True
     
     last_payment.admin_order_field = 'transactions__date'
