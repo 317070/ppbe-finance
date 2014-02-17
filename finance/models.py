@@ -63,7 +63,7 @@ class Person(models.Model):
             return None
     
 
-    def __str__(self):
+    def __unicode__(self):
         return self.firstname + " " + self.lastname
 
     def warn_coreteam(self):
@@ -108,7 +108,7 @@ class Person(models.Model):
 class Banking_Account(models.Model):
     iban = models.CharField(max_length=127)
 
-    def __str__(self):
+    def __unicode__(self):
         return ' '.join(self.iban[i:i+4] for i in xrange(0, len(self.iban), 4))
         
     @staticmethod
@@ -164,7 +164,7 @@ class Pirate_Account(models.Model):
     name = models.CharField(default="Rekening",max_length=127)
     account = models.ForeignKey('Banking_Account')
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name + " (%s)"%self.account
     
 class Transaction(models.Model):
