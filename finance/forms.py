@@ -59,9 +59,16 @@ class CSVInputForm(forms.Form):
                 firstname = name
                 lastname = ""
             try:
-                payer = Person.objects.get(firstname=firstname, lastname=lastname, postal_code=postal_code)
+                payer = Person.objects.get(current_banking_account = beneficiary_account)
             except:
-                payer = Person()
+                try:
+                    payer = Person.objects.get(firstname=firstname, lastname=lastname, postal_code=postal_code)                
+                except:
+                    try:
+                        payer = Person.objects.get(firstname=lastname, lastname=firstname, postal_code=postal_code)                
+                    except:
+                        messages.append("The new member %s %s was created"%(firstname, lastname))
+                        payer = Person()
             
             if not payer.transactions.exists() or payer.transactions.latest('date').date < transaction_date:
                 # this is the most recent transaction. Update the information we have
