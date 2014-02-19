@@ -193,6 +193,7 @@ class Transaction(models.Model):
             send_mail('Finance Squad', text, settings.DEFAULT_FROM_EMAIL, [self.beneficiary.email_address], fail_silently=False)
             self.thankyou_sent = True
             self.save()
+            self.beneficiary.warn_coreteam()
             return True
         except SMTPRecipientsRefused:
             print "refused"
