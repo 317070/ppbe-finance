@@ -6,7 +6,7 @@
 {% block branding %}
     <div style="padding:10px;">
         <a href="/admin"><h1 id="site-name" style="display:inline-block">{% trans 'The Pirate Party Finance Tool' %}</h1></a>
-        {% if request.user.is_superuser %}
+        {% if user.is_superuser %}
         <a href="/admin/import_csv" class="button" style="font-size: 20px; margin: 10px 5px 5px 5px; color:black;">Import csv</a>
         <a href="/admin/export_csv" class="button" style="font-size: 20px; margin: 10px 5px 5px 5px; color:black;">Export csv</a>
         <a href="/admin/export_members" class="button" style="font-size: 20px; margin: 10px 5px 5px 5px; color:black;">Export members</a>
