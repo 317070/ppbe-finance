@@ -93,15 +93,15 @@ def export_members(request):
     csv_writer = csv.writer(csv_file, dialect=dialect)
     
     for person in Person.objects.order_by("postal_code"):    # generate chunk
-        csv_writer.writerow([person.firstname,
-                             person.lastname,
+        csv_writer.writerow([person.firstname.encode("utf-8"),
+                             person.lastname.encode("utf-8"),
                              person.email_address,
-                             person.street,
+                             person.street.encode("utf-8"),
                              person.postal_code,
-                             person.city,
+                             person.city.encode("utf-8"),
                              person.telephone,
                              person.language,
-                             person.notas,
+                             person.notas.encode("utf-8"),
                              person.last_payment_date])
 
     zip_file.writestr("transactions.csv",csv_file.getvalue())
