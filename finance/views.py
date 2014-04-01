@@ -80,3 +80,35 @@ def export_csv(request):
     response['Content-Length'] = response.tell()
     return response
 
+@staff_member_required
+def export_members(request):
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=transactions.csv.zip'
+    
+    zip_file = zipfile.ZipFile( response, "w", zipfile.ZIP_DEFLATED)
+    csv_file = StringIO.StringIO()
+    dialect = csv.excel()
+    dialect.quotechar = '"'
+    dialect.delimiter = ','
+    csv_writer = csv.writer(csv_file, dialect=dialect)
+    
+    for person in Person.objects.order_by("postal_code"):    # generate chunk
+        csv_writer.writerow([person.firstname,
+                             person.lastname,
+                             person.email_address,
+                             person.street,
+                             person.postal_code,
+                             person.city,
+                             person.telephone,
+                             person.language,
+                             person.notas,
+                             person.last_payment_date])
+
+    zip_file.writestr("transactions.csv",csv_file.getvalue())
+    csv_file.close()
+    zip_file.close()
+    # generate the file
+    response['Content-Length'] = response.tell()
+    return response
+
+
