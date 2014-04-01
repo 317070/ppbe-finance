@@ -1,4 +1,4 @@
-from finance.models import Transaction
+from finance.models import Transaction, Person
 from django.shortcuts import render, render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template.context import RequestContext
