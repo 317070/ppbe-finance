@@ -72,11 +72,11 @@ class CSVInputForm(forms.Form):
             
             if not payer.transactions.exists() or payer.transactions.latest('date').date < transaction_date:
                 # this is the most recent transaction. Update the information we have
-                payer.firstname = firstname
-                payer.lastname = lastname
-                payer.street = street
-                payer.postal_code = postal_code
-                payer.city = city
+                #payer.firstname = firstname
+                #payer.lastname = lastname
+                #payer.street = street
+                #payer.postal_code = postal_code
+                #payer.city = city
                 payer.current_banking_account = beneficiary_account
                 payer.email_reminder_count = 0
                     
