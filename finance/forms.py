@@ -91,11 +91,10 @@ class CSVInputForm(forms.Form):
                                             date=transaction_date, 
                                             beneficiary=payer, 
                                             amount=amount,
-                                            pirate_account=pirate_account,
-                                            statement = statement)
+                                            pirate_account=pirate_account)
             transaction.BIC = BIC
             transaction.code = code
-            
+            transaction.statement = statement
             transaction.public = False
             transaction.save()
             
