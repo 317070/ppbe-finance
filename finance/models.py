@@ -39,6 +39,9 @@ class Person(models.Model):
     email_reminder_count = models.IntegerField(default=0)
     coreteam_warned = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ('firstname','lastname',)
+
     @property
     def address(self):
         return "%s %s\n%s \n%s %s"%(self.firstname, self.lastname, self.street, self.postal_code, self.city)
