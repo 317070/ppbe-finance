@@ -77,11 +77,13 @@ class CSVInputForm(forms.Form):
                         payer.current_banking_account = beneficiary_account
                         payer.email_reminder_count = 0
             
-            if payer.transactions and payer.transactions.latest('date').date < transaction_date:
-                # this is the most recent transaction. Update the information we have
-                payer.current_banking_account = beneficiary_account
-                payer.email_reminder_count = 0
-                    
+            try:
+                if payer.transactions.exists() and payer.transactions.latest('date').date < transaction_date:
+                    # this is the most recent transaction. Update the information we have
+                    payer.current_banking_account = beneficiary_account
+                    payer.email_reminder_count = 0
+            except:
+                pass
             payer.save()
             if not beneficiary_account.owner.exists():
                 payer.banking_account.add(beneficiary_account)
