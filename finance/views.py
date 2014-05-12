@@ -71,7 +71,7 @@ def export_csv(request):
                              transaction.beneficiary.lastname+" "+transaction.beneficiary.firstname,
                              "%s %s %s"%(transaction.beneficiary.street, transaction.beneficiary.postal_code, transaction.beneficiary.city),
                              transaction.code,
-                             str(transaction.statement)])
+                             transaction.statement.encode("utf-8")])
 
     zip_file.writestr("transactions.csv",csv_file.getvalue())
     csv_file.close()
