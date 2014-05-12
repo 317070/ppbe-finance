@@ -66,7 +66,7 @@ def export_csv(request):
         csv_writer.writerow([transaction.date, 
                              transaction.pirate_account.account.iban, 
                              transaction.amount, 
-                             transaction.beneficiary.current_banking_account.iban,
+                             transaction.beneficiary.current_banking_account.iban if transaction.beneficiary.current_banking_account else "",
                              transaction.BIC,
                              transaction.beneficiary.lastname+" "+transaction.beneficiary.firstname,
                              "%s %s %s"%(transaction.beneficiary.street, transaction.beneficiary.postal_code, transaction.beneficiary.city),
