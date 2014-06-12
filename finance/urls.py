@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^admin/import_csv', finance.views.import_csv, name='import_csv'),
     url(r'^admin/export_csv', finance.views.export_csv, name='export_csv'),
     url(r'^admin/export_members', finance.views.export_members, name='export_members'),
+    url(r'^admin/backup', finance.views.backup, name='backup'),
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )

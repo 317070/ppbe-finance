@@ -8,6 +8,7 @@ import zipfile
 from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 import csv
+from datetime import datetime
 
 def transaction_list(request):
     transaction_list = Transaction.objects.filter(public=True).order_by('date')[::-1]#for debugging purposes, results should actually be paginated
@@ -32,6 +33,13 @@ def chart_account(request):
         'money_data': money_data,
     })
 
+
+@staff_member_required
+def backup(request):
+    PRIVATE_ROOT = "/home/jonas/git/ppbe-finance/"
+    os.system('cp ' + PRIVATE_ROOT + "sqlite.db" + ' ' + \
+        PRIVATE_ROOT + db_file + '.back.{:%Y.%m.%d}'.format(datetime.now()))
+    return response   
 
 @staff_member_required
 def import_csv(request):
