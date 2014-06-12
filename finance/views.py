@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from finance.models import Transaction, Person
 from django.shortcuts import render, render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
@@ -9,6 +10,7 @@ from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 import csv
 from datetime import datetime
+import os
 
 def transaction_list(request):
     transaction_list = Transaction.objects.filter(public=True).order_by('date')[::-1]#for debugging purposes, results should actually be paginated
@@ -37,10 +39,15 @@ def chart_account(request):
 @staff_member_required
 def backup(request):
     PRIVATE_ROOT = "/home/jonas/git/ppbe-finance/"
+    newfile = 'sqlite.db.back.{:%Y.%m.%d}'.format(datetime.now())
+    if os.path.isfile(PRIVATE_ROOT + newfile):
+        index = 1
+        while os.path.isfile( PRIVATE_ROOT + "%s.%d" % (newfile,index) ):
+            index += 1
+        newfile = "%s.%d" % (newfile,index)
     os.system('cp ' + PRIVATE_ROOT + "sqlite.db" + ' ' + \
-        PRIVATE_ROOT + db_file + '.back.{:%Y.%m.%d}'.format(datetime.now()))
-    return render_to_response("admin/import_csv.html", context,
-                                  context_instance=RequestContext(request))   
+        PRIVATE_ROOT + newfile)
+    return redirect('/admin/')   
 
 @staff_member_required
 def import_csv(request):
