@@ -39,7 +39,8 @@ def backup(request):
     PRIVATE_ROOT = "/home/jonas/git/ppbe-finance/"
     os.system('cp ' + PRIVATE_ROOT + "sqlite.db" + ' ' + \
         PRIVATE_ROOT + db_file + '.back.{:%Y.%m.%d}'.format(datetime.now()))
-    return response   
+    return render_to_response("admin/import_csv.html", context,
+                                  context_instance=RequestContext(request))   
 
 @staff_member_required
 def import_csv(request):
