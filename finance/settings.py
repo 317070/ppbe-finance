@@ -167,11 +167,11 @@ LOGGING = {
 # Mail settings
 #####################################################################################
 
-DEFAULT_FROM_EMAIL = 'foo@bar.be'
+DEFAULT_FROM_EMAIL = 'treasure@pirateparty.be'
 
 ### Configuration to test locally with gmail ###
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_PORT = '587'
-#EMAIL_HOST_USER = '<username>@gmail.com'
-#EMAIL_HOST_PASSWORD = '<gmail password>'
-#EMAIL_USE_TLS = True
+EMAIL_HOST = 'mail.infomaniak.ch'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'treasure@pirateparty.be'
+EMAIL_HOST_PASSWORD = 'needs leave help was'
+EMAIL_USE_TLS = True
