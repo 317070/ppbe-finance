@@ -47,6 +47,12 @@ class Person(models.Model):
         return "%s %s\n%s \n%s %s"%(self.firstname, self.lastname, self.street, self.postal_code, self.city)
 
     @property
+    def is_valid_member(self):
+        if self.last_payment_date:
+            return self.last_payment_date > date.today()-timedelta(days=366) and self.is_member
+        return False
+    
+    @property
     def last_payment_date(self):
         try:
             d1 = self.transactions.latest('date').date

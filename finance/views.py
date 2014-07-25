@@ -33,6 +33,14 @@ def chart_account(request):
         'money_data': money_data,
     })
 
+def number_of_members(request):
+    count = 0
+    for member in Person.objects.all():
+        if member.is_valid_member:
+            count += 1
+    return render(request, 'member_count.html', {
+        'member_count': count,
+    })
 
 @staff_member_required
 def backup(request):
@@ -102,16 +110,17 @@ def export_members(request):
     csv_writer = csv.writer(csv_file, dialect=dialect)
     
     for person in Person.objects.order_by("postal_code"):    # generate chunk
-        csv_writer.writerow([person.firstname.encode("utf-8"),
-                             person.lastname.encode("utf-8"),
-                             person.email_address,
-                             person.street.encode("utf-8"),
-                             person.postal_code,
-                             person.city.encode("utf-8"),
-                             person.telephone,
-                             person.language,
-                             person.notas.encode("utf-8"),
-                             person.last_payment_date])
+        if person.is_valid_member():
+            csv_writer.writerow([person.firstname.encode("utf-8"),
+                                 person.lastname.encode("utf-8"),
+                                 person.email_address,
+                                 person.street.encode("utf-8"),
+                                 person.postal_code,
+                                 person.city.encode("utf-8"),
+                                 person.telephone,
+                                 person.language,
+                                 person.notas.encode("utf-8"),
+                                 person.last_payment_date])
 
     zip_file.writestr("transactions.csv",csv_file.getvalue())
     csv_file.close()
