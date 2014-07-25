@@ -117,7 +117,7 @@ def export_members(request):
     csv_writer = csv.writer(csv_file, dialect=dialect)
     
     for person in Person.objects.order_by("postal_code"):    # generate chunk
-        if person.is_valid_member():
+        if person.is_valid_member:
             csv_writer.writerow([person.firstname.encode("utf-8"),
                                  person.lastname.encode("utf-8"),
                                  person.email_address,
