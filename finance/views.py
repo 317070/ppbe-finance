@@ -14,6 +14,7 @@ import os
 from smtplib import SMTPRecipientsRefused
 from django.core.mail import send_mail
 from django.utils.timezone import datetime, timedelta, now
+from django.template.loader import render_to_string
 
 
 def transaction_list(request):
