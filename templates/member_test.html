@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% load filters %}
+
+{% block content %}
+	<form action="/forms/member_test" method="post">{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="Submit" />
+	</form>
+{% endblock %}

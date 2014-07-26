@@ -3,7 +3,7 @@ from finance.models import Transaction, Person
 from django.shortcuts import render, render_to_response
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template.context import RequestContext
-from finance.forms import CSVInputForm
+from finance.forms import CSVInputForm, MemberTestForm
 import StringIO
 import zipfile
 from django.http import HttpResponse
@@ -11,6 +11,10 @@ from django.core.servers.basehttp import FileWrapper
 import csv
 from datetime import datetime
 import os
+from smtplib import SMTPRecipientsRefused
+from django.core.mail import send_mail
+from django.utils.timezone import datetime, timedelta, now
+
 
 def transaction_list(request):
     transaction_list = Transaction.objects.filter(public=True).order_by('date')[::-1]#for debugging purposes, results should actually be paginated
@@ -43,6 +47,53 @@ def number_of_members(request):
     return render(request, 'member_count.html', {
         'member_count': count,
     })
+
+def member_test(request):
+    messages = []
+    if request.method == 'POST': # If the form has been submitted...
+        form = MemberTestForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            if form.cleaned_data['mail']:
+                mail = form.cleaned_data['mail']
+                try:
+                   member = Person.objects.get(email_address=mail)
+                except Person.DoesNotExist:
+                   member = None
+            elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
+                try:
+                   member = Person.objects.get(firstname=form.cleaned_data['firstname'], lastname=form.cleaned_data['lastname'])
+                   mail = member.email_address
+                except Person.DoesNotExist:
+                   member = None
+            try:
+                if member is None or not member.is_valid_member:
+                    text = render_to_string('mails/member_denial.txt', dictionary={})
+                else:
+                    date = last_payment_date + timedelta(days=366)
+                    text = render_to_string('mails/member_confirmation.txt', dictionary={'firstname':member.firstname, 
+                                                                                         'lastname': member.lastname, 
+                                                                                         'postal_code':member.postal_code,
+                                                                                         'final_date':date})
+                if mail:
+                    send_mail('Finance Squad', text, "finance@pirateparty.be", [mail], fail_silently=False)
+                    if form.cleaned_data['mail']:
+                        messages.append("A mail has been sent to the mail address %s"%form.cleaned_data['mail'])
+                    elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
+                        messages.append("A mail has been sent to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
+            except SMTPRecipientsRefused:
+                if form.cleaned_data['mail']:
+                    messages.append("We weren't able to send a mail to the address %s"%form.cleaned_data['mail'])
+                elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
+                    messages.append("We weren't able to send a mail to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
+    else:
+        form = MemberTestForm() # An unbound form
+
+    return render(request, 'member_test.html', {
+        'form': form,
+        'messages': messages,
+    })
+
+
 
 @staff_member_required
 def backup(request):

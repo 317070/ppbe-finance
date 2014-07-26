@@ -1,0 +1,12 @@
+Hi,
+
+This mail is sent to you to confirm that you are a member of the Pirate Party in Belgium.
+According to our records, your name is {{ firstname }} {{ lastname }}, you live in the community with the postal code {{ postal_code }} and we can contact you on this mail address. Your membership fee has been paid up to {{ final_date }}.
+If this would be incorrect, please let us know by replying to this mail!
+
+We want to thank you for your continued cooperation with the party!
+
+Yours sincerely,
+
+The Finance Squad
+Pirate Party Belgium

@@ -5,6 +5,12 @@ import re
 from datetime import datetime
 from email.utils import parseaddr
 
+
+class MemberTestForm(forms.Form):
+    mail = forms.EmailField(required=False)
+    firstname = forms.CharField(required=False)
+    lastname = forms.CharField(required=False)
+
 class CSVInputForm(forms.Form):
     file = forms.FileField()
 

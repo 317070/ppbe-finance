@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^list$', finance.views.transaction_list, name='list'),
     url(r'^charts/account$', finance.views.chart_account, name='chart_account'),
     url(r'^numbers/members$', finance.views.number_of_members, name='number_of_members'),
+    url(r'^forms/member_test$', finance.views.member_test, name='member_test'),
     
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
