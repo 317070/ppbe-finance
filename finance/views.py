@@ -68,6 +68,9 @@ def member_test(request):
                 except Person.DoesNotExist:
                    member = None
                    mail = None
+            else:
+                member = None
+                messages.append("Either fill in an emailaddress, or a first and last name")
             try:
                 if member is None or not member.is_valid_member:
                     text = render_to_string('mails/member_denial.txt', dictionary={})
