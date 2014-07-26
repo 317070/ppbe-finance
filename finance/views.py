@@ -70,6 +70,7 @@ def member_test(request):
                    mail = None
             else:
                 member = None
+                mail = None
                 messages.append("Either fill in an emailaddress, or a first and last name")
             try:
                 if member is None or not member.is_valid_member:
