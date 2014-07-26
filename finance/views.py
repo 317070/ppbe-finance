@@ -69,7 +69,7 @@ def member_test(request):
                 if member is None or not member.is_valid_member:
                     text = render_to_string('mails/member_denial.txt', dictionary={})
                 else:
-                    date = last_payment_date + timedelta(days=366)
+                    date = member.last_payment_date + timedelta(days=366)
                     text = render_to_string('mails/member_confirmation.txt', dictionary={'firstname':member.firstname, 
                                                                                          'lastname': member.lastname, 
                                                                                          'postal_code':member.postal_code,
