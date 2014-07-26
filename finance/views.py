@@ -60,7 +60,7 @@ def member_test(request):
                    member = Person.objects.get(email_address=mail)
                 except Person.DoesNotExist:
                    member = None
-                   
+                form_valid = True   
             elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
                 try:
                    member = Person.objects.get(firstname=form.cleaned_data['firstname'], lastname=form.cleaned_data['lastname'])
@@ -68,32 +68,35 @@ def member_test(request):
                 except Person.DoesNotExist:
                    member = None
                    mail = None
+                form_valid = True
             else:
                 member = None
                 mail = None
                 messages.append("Either fill in an emailaddress, or a first and last name")
-            try:
-                if member is None or not member.is_valid_member:
-                    text = render_to_string('mails/member_denial.txt', dictionary={})
-                else:
-                    date = member.last_payment_date + timedelta(days=366)
-                    text = render_to_string('mails/member_confirmation.txt', dictionary={'firstname':member.firstname, 
-                                                                                         'lastname': member.lastname, 
-                                                                                         'postal_code':member.postal_code,
-                                                                                         'final_date':date})
-                if mail:
-                    send_mail('Finance Squad', text, "finance@pirateparty.be", [mail], fail_silently=False)
-                    if form.cleaned_data['mail']:
-                        messages.append("A mail has been sent to the mail address %s"%form.cleaned_data['mail'])
-                    elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
+                form_valid = False
+            if form_valid:
+                try:
+                    if member is None or not member.is_valid_member:
+                        text = render_to_string('mails/member_denial.txt', dictionary={})
+                    else:
+                        date = member.last_payment_date + timedelta(days=366)
+                        text = render_to_string('mails/member_confirmation.txt', dictionary={'firstname':member.firstname, 
+                                                                                             'lastname': member.lastname, 
+                                                                                             'postal_code':member.postal_code,
+                                                                                             'final_date':date})
+                    if mail:
+                        send_mail('Finance Squad', text, "finance@pirateparty.be", [mail], fail_silently=False)
+                        if form.cleaned_data['mail']:
+                            messages.append("A mail has been sent to the mail address %s"%form.cleaned_data['mail'])
+                        elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
+                            messages.append("A mail has been sent to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
+                    else:
                         messages.append("A mail has been sent to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
-                else:
-                    messages.append("A mail has been sent to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
-            except SMTPRecipientsRefused:
-                if form.cleaned_data['mail']:
-                    messages.append("We weren't able to send a mail to the address %s"%form.cleaned_data['mail'])
-                elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
-                    messages.append("We weren't able to send a mail to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
+                except SMTPRecipientsRefused:
+                    if form.cleaned_data['mail']:
+                        messages.append("We weren't able to send a mail to the address %s"%form.cleaned_data['mail'])
+                    elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
+                        messages.append("We weren't able to send a mail to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
     else:
         form = MemberTestForm() # An unbound form
 
