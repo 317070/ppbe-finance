@@ -60,12 +60,14 @@ def member_test(request):
                    member = Person.objects.get(email_address=mail)
                 except Person.DoesNotExist:
                    member = None
+                   
             elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
                 try:
                    member = Person.objects.get(firstname=form.cleaned_data['firstname'], lastname=form.cleaned_data['lastname'])
                    mail = member.email_address
                 except Person.DoesNotExist:
                    member = None
+                   mail = None
             try:
                 if member is None or not member.is_valid_member:
                     text = render_to_string('mails/member_denial.txt', dictionary={})
