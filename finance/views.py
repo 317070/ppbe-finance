@@ -83,6 +83,8 @@ def member_test(request):
                         messages.append("A mail has been sent to the mail address %s"%form.cleaned_data['mail'])
                     elif form.cleaned_data['firstname'] and form.cleaned_data['lastname']:
                         messages.append("A mail has been sent to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
+                else:
+                    messages.append("A mail has been sent to the mail address we have registered for the pirate with the name %s %s" % (form.cleaned_data['firstname'], form.cleaned_data['lastname']))
             except SMTPRecipientsRefused:
                 if form.cleaned_data['mail']:
                     messages.append("We weren't able to send a mail to the address %s"%form.cleaned_data['mail'])
