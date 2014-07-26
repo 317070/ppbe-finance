@@ -3,8 +3,38 @@
 {% load filters %}
 
 {% block content %}
-	<form action="/forms/member_test" method="post">{% csrf_token %}
-	{{ form.as_p }}
-	<input type="submit" value="Submit" />
-	</form>
+    <div class="container">
+	    <div class="row-fluid">
+		    <div class="span4 offset4 alert alert-info">
+				<form action="/forms/member_test" method="post">{% csrf_token %}
+				
+			        {{ form.non_field_errors }}
+			    <div class="fieldWrapper">
+			        {{ form.mail.errors }}
+			        <label for="id_subject">Email address:</label>
+			        {{ form.mail }}
+			    </div>&nbsp;
+			    <h5><span>OR</span></h5>
+			    <div class="fieldWrapper">
+			        {{ form.firstname.errors }}
+			        <label for="id_message">First name:</label>
+			        {{ form.firstname }}
+			    </div>
+			    <div class="fieldWrapper">
+			        {{ form.lastname.errors }}
+			        <label for="id_sender">Last name:</label>
+			        {{ form.lastname }}
+			    </div>
+			    
+				<input type="submit" value="Submit" />
+				</form>
+			</div>
+			<div class="span4 offset4 alert alert-success">
+			     <p>This form tests whether you are (still) a member of the Pirate Party. Enter your name or an email address and you will receive the response in your mailbox.</p>
+			     <p>If you did not receive a mail, this means you are not a member of the Pirate Party. Follow the instructions <a href="http://pirateparty.be/finance">here</a> to become a member.</p>
+                 
+			     
+			</div>
+		</div>
+	</div>
 {% endblock %}
